@@ -2,7 +2,7 @@
 
 A free, interactive cybersecurity learning site: roadmap, career paths, team types, encryption explained, certificates with official links, curated resources, and hands-on practice (quiz, lab, terminal game).
 
-Built with **React 18**, **TypeScript (strict)**, **Three.js** and **Vite**. No backend, no accounts. Progress is stored in the browser (`localStorage`).
+Built with **React 18**, **TypeScript (strict)**, **Three.js**, **GSAP** and **Vite**. No backend, no accounts. Progress is stored in the browser (`localStorage`).
 
 > Educational use only. Practice only on systems you own or have written permission to test. Unauthorized access is illegal.
 
@@ -21,12 +21,12 @@ Built with **React 18**, **TypeScript (strict)**, **Three.js** and **Vite**. No 
 
 | Area | Pages |
 |---|---|
-| Learn | Roadmap (with progress tracker), Study planner, Careers, Cyber teams, Encryption, Attack vs defense (kill chain) |
+| Learn | Roadmap (with progress tracker), Study planner, Careers, Cyber teams, Encryption, Attack vs defense (kill chain), Risk matrix |
 | Prove | Certificates (filterable, with official links), Quiz |
-| Explore | Resources (searchable), Commands cheat sheet, Glossary, Home lab guide |
-| Practice | Practice lab (12 challenges), Terminal game (3 flags), Toolbox (encoder, hash, password strength) |
+| Explore | Arsenal (tools and techniques, with XP), Threat radar (simulated), Resources (searchable), Commands cheat sheet, Glossary, Home lab guide |
+| Practice | Practice lab (12 challenges), Terminal game (3 flags), Firewall duel, Phish spotter, Incident simulator, Network lab (subnets, ports, hash avalanche), Toolbox (encoder, hash, password strength) |
 
-Extras: rotating 3D network sphere with attack packets (Three.js), typewriter headline, dark/light mode, rank and XP system, command palette (`Ctrl/Cmd + K`), copy buttons for commands, mobile-friendly layout.
+Extras: GSAP scroll reveals, 3D card tilt, magnetic buttons, cursor glow, aurora background and scroll progress bar; rotating 3D network sphere with attack packets (Three.js), typewriter headline, dark/light mode, rank and XP system, command palette (`Ctrl/Cmd + K`), copy buttons for commands, mobile-friendly layout.
 
 ## Quick start
 
@@ -65,6 +65,10 @@ cyberpath/
    ├─ Quiz.tsx           10-question quiz
    ├─ Tools.tsx          Toolbox (encode/decode, hashes, password strength) and Study planner
    ├─ Globe.tsx          Three.js scene
+   ├─ fx.ts              GSAP effects (page reveals, tilt, magnetic buttons, aurora)
+   ├─ Radar.tsx, NetLab.tsx, Risk.tsx   Canvas radar, network/crypto visuals, risk heatmap
+   ├─ Drill.tsx, drills.ts   Shared scenario engine (firewall, phishing, incident response)
+   ├─ Arsenal.tsx        Tool/technique explorer; data in arsenalData.ts
    ├─ hooks.ts           useLS (localStorage), useHash, caesar, sha helpers
    ├─ data.ts            Teams, encryption, certificates, careers, commands, glossary, resources
    └─ styles.css         Design tokens (light/dark), layout, components
@@ -75,7 +79,7 @@ cyberpath/
 - **Routing:** hash-based (`#road`, `#lab`, ...). The page list lives in the `META` array in `App.tsx`; the sidebar, Back/Next buttons, home grid and command palette are all generated from it.
 - **Theme:** CSS custom properties in `styles.css`. The toggle sets `data-theme` on `<html>`; the first visit follows the OS setting.
 - **State:** `useLS` wraps `localStorage` (with try/catch) and emits an `ls` event so the sidebar XP updates live.
-- **XP:** roadmap item = 10, lab challenge = 40, terminal flag = 50, best quiz score point = 20. Ranks: Newbie, Apprentice, Analyst, Hunter, Operator, Architect.
+- **XP:** roadmap item = 10, lab challenge = 40, terminal flag = 50, best quiz score point = 20. Ranks: Newbie, Apprentice, Analyst, Hunter, Operator, Architect. All GSAP effects switch off when the OS requests reduced motion.
 - **Crypto helpers:** hashing uses the browser Web Crypto API (`crypto.subtle`).
 
 ## Customizing content
@@ -87,6 +91,7 @@ cyberpath/
 | Certificate links | `CU` map in `src/Pages.tsx` (keyed by certificate name) |
 | Roadmap stages and checklist items | `ST` in `src/Pages.tsx` |
 | Lab challenges | `C` in `src/Lab.tsx` |
+| Arsenal tools and techniques | `src/arsenalData.ts` |
 | Quiz questions | `Q` in `src/Quiz.tsx` |
 | Terminal files, commands and flags | `FS`, `FL`, `run()` in `src/Terminal.tsx` |
 | Colors and fonts | CSS variables at the top of `src/styles.css` |
