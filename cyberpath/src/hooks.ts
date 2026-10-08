@@ -13,3 +13,4 @@ export async function sha(alg: string, t: string): Promise<string> {
   const h = await crypto.subtle.digest(alg, new TextEncoder().encode(t));
   return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
+export const vig = (s: string, k: string, dec = false): string => { const key = k.replace(/[^a-z]/gi, '').toUpperCase(); if (!key) return s; let j = 0; return s.replace(/[a-z]/gi, c => { const b = c < 'a' ? 65 : 97; const sh = (key.charCodeAt(j++ % key.length) - 65) * (dec ? -1 : 1); return String.fromCharCode((((c.charCodeAt(0) - b + sh) % 26) + 26) % 26 + b); }); };

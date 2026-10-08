@@ -15,6 +15,15 @@ function Pass() {
     <p><b>{p ? lvl : 'Type to test'}</b>{p && <> · about {Math.round(bits)} bits · offline crack on a fast hash: {fmt(sec)}</>}</p>
     <p>Length beats complexity. Use a password manager and a 4+ word passphrase, and turn on MFA.</p></div>);
 }
+function Chmod() {
+  const [m, setM] = useState([6, 4, 4]); const flip = (i: number, b: number) => setM(m.map((d, k) => (k === i ? d ^ b : d)));
+  const sym = m.map(d => (d & 4 ? 'r' : '-') + (d & 2 ? 'w' : '-') + (d & 1 ? 'x' : '-')).join('');
+  const bits: [string, number][] = [['r', 4], ['w', 2], ['x', 1]];
+  return (<div className="card"><h3>chmod calculator</h3>
+    {['Owner', 'Group', 'Others'].map((n, i) => <div className="row" key={n} style={{ margin: '4px 0' }}><b style={{ width: 64 }}>{n}</b>{bits.map(([l, b]) => <label className="chk" key={l}><input type="checkbox" aria-label={n + ' ' + l} checked={(m[i] & b) !== 0} onChange={() => flip(i, b)} />{l}</label>)}</div>)}
+    <div className="out"><div><b>Command</b>chmod {m.join('')} file</div><div><b>ls -l shows</b>-{sym}</div></div>
+    <p className="msg">{m[2] & 2 ? 'Others can write: avoid this.' : m.join('') === '600' ? 'Good for private keys and secrets.' : 'Ask: does everyone listed really need this access?'}</p></div>);
+}
 export function Toolbox() {
   const [op, setOp] = useState('Base64 encode'); const [t, setT] = useState('hello world'); const [alg, setAlg] = useState('SHA-256'); const [h, setH] = useState('');
   let out = ''; try { out = OPS[op](t); } catch { out = 'Invalid input for this operation'; }
@@ -26,7 +35,7 @@ export function Toolbox() {
       <div className="card"><h3>Hash generator</h3><label htmlFor="ha">Algorithm</label>
         <select id="ha" value={alg} onChange={e => setAlg(e.target.value)}>{['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'].map(k => <option key={k}>{k}</option>)}</select>
         <div className="out"><div><b>{alg} of the input</b>{h}</div></div><p>SHA-1 is broken for security use. Use Argon2id or bcrypt for passwords.</p></div>
-      <Pass /></div></>);
+      <Pass /><Chmod /></div></>);
 }
 const LANES: Record<string, number> = { 'SOC analyst': 300, 'Penetration tester': 400, 'GRC analyst': 250, 'Cloud security': 300 };
 const PH: [string, number, string][] = [['Foundations', .25, 'Networking, Linux, Python'], ['Core security', .35, 'OWASP, crypto, tools, guided rooms'], ['Lane skills', .25, 'Labs and projects for your lane'], ['Prove it', .15, 'Certificate, write-ups, CTFs, applications']];

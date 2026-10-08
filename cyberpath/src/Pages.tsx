@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import Globe from './Globe';
 import { useLS, caesar, sha } from './hooks';
+import { LESSONS } from './content/lessons';
+import { KW } from './content/keywords';
+import Icon, { ICON } from './Icon';
+import Icons3D from './Icons3D';
+import { Hud } from './Soc';
+import Skyline from './Skyline';
+import { Daily, Journey, Myths } from './Delight';
 import { teams, cry, certs, R, CP, TL, G } from './data';
 
 function Typer() {
@@ -9,14 +16,18 @@ function Typer() {
   useEffect(() => { const w = W[i]; const t = setTimeout(() => { if (n === w.length) { setN(0); setI((i + 1) % W.length); } else setN(n + 1); }, n === w.length ? 1400 : 70); return () => clearTimeout(t); }, [n, i]);
   return <span className="ty">{W[i].slice(0, n)}</span>;
 }
+const PIL: [string, string, string[]][] = [['Learn', 'Understand the ideas', ['road', 'planner', 'careers', 'teams', 'crypto', 'cryptolab', 'atlas', 'risk', 'sims', 'kill']], ['Analyze', 'Inspect links, files, emails, logs and traffic', ['analyze', 'soc', 'netmap', 'packets', 'intel', 'radar']], ['Practice', 'Hands-on and safe', ['lab', 'ctf', 'terminal', 'soccase', 'deflab', 'firewall', 'phish', 'ir', 'drills', 'netlab', 'toolbox']], ['Protect', 'Habits, plans and proof', ['safety', 'finder', 'certs', 'quiz', 'progress']], ['Reference', 'Look things up', ['arsenal', 'res', 'tools', 'gloss', 'homelab', 'about']]];
 export function Home({ links }: { links: [string, string, string][] }) {
   const [t, setT] = useState('Attack at dawn'); const [k, setK] = useState(3); const [h, setH] = useState('');
   useEffect(() => { sha('SHA-256', t).then(setH).catch(() => setH('Not available in this browser')); }, [t]);
-  const nb = { textDecoration: 'none' };
+  const nb = { textDecoration: 'none' }; const L: Record<string, string[]> = Object.fromEntries(links.map(l => [l[0], l]));
   return (<>
     <h1>Learn to <Typer /></h1>
     <p className="lead">A senior's map: what to learn first, which team fits you, how encryption works, which certificates matter, and a lab to practice right here.</p>
     <div className="cta"><a className="btn p" href="#road" style={nb}>Start the roadmap</a><a className="btn" href="#lab" style={nb}>Jump to the lab</a></div>
+    <p className="mono" style={{ marginTop: 14, color: 'var(--mut)' }}>Free · No sign-up · No tracking · Runs entirely in your browser</p>
+    <Hud />
+    <Skyline />
     <Globe />
     <div className="bench"><h3>Cipher bench: try it now</h3>
       <label htmlFor="pt">Type a message</label><input type="text" id="pt" value={t} onChange={e => setT(e.target.value)} />
@@ -26,8 +37,12 @@ export function Home({ links }: { links: [string, string, string][] }) {
         <div><b>Base64 (encoding, not encryption)</b>{(() => { try { return btoa(unescape(encodeURIComponent(t))); } catch { return ''; } })()}</div>
         <div><b>SHA-256 (one-way hash)</b>{h}</div></div>
       <p className="msg">Change one letter and the hash changes completely. That is the avalanche effect.</p></div>
-    <h2 style={{ marginTop: 44, fontSize: 26 }}>Where do you want to go?</h2>
-    <div className="grid" style={{ marginTop: 12 }}>{links.map(l => <a key={l[0]} className="card" href={'#' + l[0]}><h3>{l[1]}</h3><p>{l[2]}</p></a>)}</div>
+    <Daily />
+    <Icons3D />
+    <Journey />
+    <h2 style={{ marginTop: 44, fontSize: 26 }}>Learn, analyze, practice, protect</h2>
+    {PIL.map(([t, sub, ids]) => <div className="pil" key={t}><h3>{t}<small>{sub}</small></h3><div className="grid">{ids.filter(i => L[i]).map((i, n) => <a key={i} className="card" href={'#' + i}><Icon n={ICON[i] || 'book'} size={28} delay={n * 0.04} intro className="ico" /><h3>{L[i][1]}</h3><p>{L[i][2]}</p></a>)}</div></div>)}
+    <Myths />
   </>);
 }
 
@@ -37,10 +52,13 @@ const ST: [string, string[]][] = [
   ['Stage 3: Pick a lane', ['Defense: Splunk free training, CyberDefenders, MITRE ATT&CK', 'Offense: Hack The Box, PortSwigger, TCM PEH course', 'GRC: NIST CSF, ISO 27001 overview, ISC2 CC', 'AppSec or Cloud: secure code review, AWS/Azure security']],
   ['Stage 4: Prove it', ['Earn one entry-level certificate for your lane', 'Publish 5 write-ups on GitHub or a blog', 'Play 3 CTFs (picoCTF, CTFtime)', 'Apply for junior roles and internships; join communities']]];
 export function Roadmap() {
-  const [done, setDone] = useLS<string[]>('rm', []);
+  const [done, setDone] = useLS<string[]>('rm', []); const [ld] = useLS<string[]>('ls', []);
   const total = ST.reduce((n, s) => n + s[1].length, 0);
   const tog = (k: string) => setDone(done.includes(k) ? done.filter(x => x !== k) : [...done, k]);
   return (<><h2>The roadmap</h2><p className="lead">Tick items as you finish them. Progress is saved in your browser.</p>
+    <h3>Guided lessons: start here</h3><p className="lead">Plain-English lessons for absolute beginners. Each one explains the idea, shows how attackers and defenders see it, ends with a quiz and a safe exercise.</p>
+    <div className="grid" style={{ marginBottom: 28 }}>{LESSONS.map((l, n) => <a key={l.id} className="card" href={'#lesson/' + l.id}><span className="tag">{ld.includes(l.id) ? 'Done' : 'Lesson ' + (n + 1)}</span><h3>{l.title}</h3><p>{l.level} · {l.time}</p></a>)}</div>
+    <h3>Checklist</h3>
     <div className="mono">{done.length} / {total} done</div><div className="bar"><i style={{ width: done.length / total * 100 + '%' }} /></div>
     {ST.map((s, i) => <details className="stage" key={s[0]} open={i === 0}><summary>{s[0]}</summary><div className="in">
       {s[1].map(it => <label className="chk" key={it}><input type="checkbox" checked={done.includes(it)} onChange={() => tog(it)} />{it}</label>)}</div></details>)}</>);
@@ -53,7 +71,7 @@ export const Teams = () => (<><h2>Types of cyber teams</h2><p className="lead">C
 export const Crypto = () => (<><h2>Types of encryption and related tools</h2><p className="lead">Never invent your own crypto. Use vetted libraries and current algorithms.</p>
   <div className="grid">{cry.map(c => <div className="card" key={c[0]}><h3>{c[0]}</h3><p>{c[1]}</p><p><b>Examples:</b> {c[2]}</p><p>{c[3]}</p></div>)}</div></>);
 
-const CU: Record<string, string> = {
+export const CU: Record<string, string> = {
   'ISC2 Certified in Cybersecurity (CC)': 'https://www.isc2.org/certifications/cc', 'Microsoft SC-900': 'https://learn.microsoft.com/credentials/certifications/security-compliance-and-identity-fundamentals/',
   'Google Cybersecurity Certificate': 'https://grow.google/certificates/cybersecurity/', 'Cisco Networking Academy courses': 'https://www.netacad.com',
   'CompTIA Security+': 'https://www.comptia.org/certifications/security', 'CompTIA Network+': 'https://www.comptia.org/certifications/network',
@@ -84,9 +102,10 @@ function Cmd({ t, c }: { t: string; c: string }) {
 }
 export const Commands = () => (<><h2>Command cheat sheet</h2><p className="lead">Run these only on your own machines or lab targets.</p><div className="grid">{TL.map(c => <Cmd key={c[0]} t={c[0]} c={c[1]} />)}</div></>);
 
+const ALL: string[][] = [...G, ...KW.map(k => [k[0].split('|')[0], k[1], k[0]])].sort((a, b) => a[0].localeCompare(b[0]));
 export function Glossary() {
-  const [q, setQ] = useState(''); const s = q.toLowerCase(); const it = G.filter(g => (g[0] + g[1]).toLowerCase().includes(s));
-  return (<><h2>Glossary</h2><p className="lead">Plain-English security terms.</p>
+  const [q, setQ] = useState(''); const s = q.toLowerCase(); const it = ALL.filter(g => (g[0] + g[1] + (g[2] || '')).toLowerCase().includes(s));
+  return (<><h2>Glossary</h2><p className="lead">{ALL.length} plain-English security terms. Search by word or alias, for example "sqli" or "xss".</p>
     <input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder="Search terms (e.g. phishing)" aria-label="Search glossary" />
     <dl>{it.length ? it.map(g => <div key={g[0]}><dt>{g[0]}</dt><dd>{g[1]}</dd></div>) : <dd>No match. Try another word.</dd>}</dl></>);
 }
