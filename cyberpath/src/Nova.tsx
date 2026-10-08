@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { useLS } from './hooks';
+import { useLS, zoomOf } from './hooks';
 const W = 150, H = 190;
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k; const cl = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 /** Nova: a small 3D chibi mascot built from Three.js primitives. She stays where you put her, looks at the pointer,
@@ -38,17 +38,18 @@ export default function Nova() {
     mk(head, new THREE.BoxGeometry(0.14, 0.03, 0.03), dark, 0, -0.02, 0.9); mk(head, new THREE.TorusGeometry(0.1, 0.022, 6, 12, Math.PI), lip, 0, -0.38, 0.87).rotation.z = Math.PI;
     const N = 16; const pg = new THREE.BufferGeometry(); const pp = new Float32Array(N * 3); const pv = new Float32Array(N * 3); pg.setAttribute('position', new THREE.BufferAttribute(pp, 3));
     const pm = new THREE.PointsMaterial({ color: 0xffd966, size: 0.22, transparent: true, opacity: 0 }); const pts = new THREE.Points(pg, pm); pts.frustumCulled = false; sc.add(pts); geos.push(pg); mats.push(pm);
-    const clampX = (v: number) => cl(v, 0, window.innerWidth - W), clampY = (v: number) => cl(v, 64, window.innerHeight - H);
-    let x = 12, y = clampY(window.innerHeight - H - 6), tx = x, ty = y, mx = window.innerWidth / 2, my = window.innerHeight / 2, st = 'idle', until = 1.5, t = 0, ph = 0, dirx = 0, jh = 0, jv = 0, spin = 0, blinkAt = 2, blinkT = 0, pl = 0, last = performance.now(), raf = 0;
+    let Z = zoomOf(); const vw = () => window.innerWidth / Z, vh = () => window.innerHeight / Z;
+    const clampX = (v: number) => cl(v, 0, vw() - W), clampY = (v: number) => cl(v, 64, vh() - H);
+    let x = 12, y = clampY(vh() - H - 6), tx = x, ty = y, mx = vw() / 2, my = vh() / 2, st = 'idle', until = 1.5, t = 0, ph = 0, dirx = 0, jh = 0, jv = 0, spin = 0, blinkAt = 2, blinkT = 0, pl = 0, last = performance.now(), raf = 0;
     let offx = 0, offy = 0, moved = 0, drag = false;
     const apply = () => { el.style.transform = `translate3d(${x}px,${y}px,0)`; }; apply();
     const burst = () => { for (let i = 0; i < N; i++) { pp[i * 3] = 0; pp[i * 3 + 1] = 3.4; pp[i * 3 + 2] = 0.6; const a = Math.random() * 6.28, s = 1.2 + Math.random() * 1.6; pv[i * 3] = Math.cos(a) * s; pv[i * 3 + 1] = 1.5 + Math.random() * 2; pv[i * 3 + 2] = Math.sin(a) * s * 0.5; } pl = 1; };
-    const mv = (e: PointerEvent) => { mx = e.clientX; my = e.clientY; };
-    const down = (e: PointerEvent) => { drag = true; moved = 0; st = 'drag'; offx = e.clientX - x; offy = e.clientY - y; el.setPointerCapture(e.pointerId); el.style.cursor = 'grabbing'; };
-    const dmove = (e: PointerEvent) => { if (!drag) return; const nx = clampX(e.clientX - offx), ny = clampY(e.clientY - offy); moved += Math.abs(nx - x) + Math.abs(ny - y); x = nx; y = ny; apply(); };
+    const mv = (e: PointerEvent) => { mx = e.clientX / Z; my = e.clientY / Z; };
+    const down = (e: PointerEvent) => { drag = true; moved = 0; st = 'drag'; offx = e.clientX / Z - x; offy = e.clientY / Z - y; el.setPointerCapture(e.pointerId); el.style.cursor = 'grabbing'; };
+    const dmove = (e: PointerEvent) => { if (!drag) return; const nx = clampX(e.clientX / Z - offx), ny = clampY(e.clientY / Z - offy); moved += Math.abs(nx - x) + Math.abs(ny - y); x = nx; y = ny; apply(); };
     const up = () => { if (!drag) return; drag = false; el.style.cursor = 'grab'; st = 'idle'; until = t + 2.5; if (moved < 6) { jv = 5; spin = Math.PI * 2; burst(); } else jv = 3; if (calm) apply(); };
     el.addEventListener('pointerdown', down); el.addEventListener('pointermove', dmove); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); window.addEventListener('pointermove', mv);
-    const rs = () => { x = clampX(x); y = clampY(y); apply(); }; window.addEventListener('resize', rs);
+    const rs = () => { Z = zoomOf(); x = clampX(x); y = clampY(y); apply(); }; window.addEventListener('resize', rs);
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame); const dt = Math.min(0.05, (now - last) / 1000); last = now; if (document.hidden) return; t += dt;
       const walk = st === 'walk' ? 1 : 0; ph += dt * 9 * walk; const sw = Math.sin(ph) * 0.7 * walk, dr = st === 'drag';

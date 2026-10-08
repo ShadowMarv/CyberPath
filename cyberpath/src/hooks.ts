@@ -14,3 +14,5 @@ export async function sha(alg: string, t: string): Promise<string> {
   return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 export const vig = (s: string, k: string, dec = false): string => { const key = k.replace(/[^a-z]/gi, '').toUpperCase(); if (!key) return s; let j = 0; return s.replace(/[a-z]/gi, c => { const b = c < 'a' ? 65 : 97; const sh = (key.charCodeAt(j++ % key.length) - 65) * (dec ? -1 : 1); return String.fromCharCode((((c.charCodeAt(0) - b + sh) % 26) + 26) % 26 + b); }); };
+/** Current CSS zoom of the page (1 when unsupported). Pixel math done in JS must divide viewport pixels by this. */
+export const zoomOf = (): number => { const z = parseFloat((getComputedStyle(document.documentElement) as unknown as { zoom?: string }).zoom || '1'); return z > 0 ? z : 1; };

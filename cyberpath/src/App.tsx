@@ -78,7 +78,8 @@ export default function App() {
   const pl = [...META, ...LESSONS.map(l => ['lesson/' + l.id, l.title, l.level + ' lesson', 'Lesson'])].filter(m => (m[1] + m[2] + m[3]).toLowerCase().includes(pq.toLowerCase()));
   useEffect(() => { setDd(''); setMenu(false); document.getElementById('main-content')?.focus({ preventScroll: true }); }, [hash]);
   useEffect(() => { const f = (e: MouseEvent) => { if (!(e.target as HTMLElement).closest?.('#tb')) setDd(''); }; document.addEventListener('click', f); return () => document.removeEventListener('click', f); }, []);
-  const [rain, setRain] = useState(false); const [fx, setFx] = useLS<boolean>('fx', (navigator.hardwareConcurrency || 4) > 2);
+  const [rain, setRain] = useState(false); const [fx, setFx] = useLS<boolean>('fx', (navigator.hardwareConcurrency || 4) > 2); const [zoom, setZoom] = useLS<number>('zoom', 0.67);
+  useEffect(() => { document.documentElement.style.setProperty('--z', String(zoom)); window.dispatchEvent(new Event('resize')); }, [zoom]);
   useEffect(() => { try { const d = new Date().toISOString().slice(0, 10); const a: string[] = JSON.parse(localStorage.getItem('days') || '[]'); if (!a.includes(d)) { a.push(d); localStorage.setItem('days', JSON.stringify(a.slice(-400))); window.dispatchEvent(new Event('ls')); } } catch { /* storage unavailable */ } }, []);
   useEffect(() => {
     const K = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a']; let n = 0;
@@ -96,6 +97,7 @@ export default function App() {
           <div className="dm">{META.filter(m => m[3] === g && !['road', 'safety'].includes(m[0])).map(m => <a key={m[0]} href={'#' + m[0]} aria-current={act === m[0] ? 'page' : undefined}><Icon n={ICON[m[0]] || 'book'} size={20} /><div><b>{m[1]}</b><small>{m[2]}</small></div></a>)}</div></div>)}
       </nav>
       <div className="tbr"><button className="btn" type="button" onClick={() => setPal(true)}>Search · Ctrl K</button><a className="chip" href="#progress">{RN[ri]} · {xp} XP</a>
+        <button className="btn zbtn" type="button" onClick={() => setZoom(zoom === 0.67 ? 0.8 : zoom === 0.8 ? 1 : 0.67)} title="Page zoom on desktop screens">Zoom {Math.round(zoom * 100)}%</button>
         <button className="btn" type="button" aria-pressed={fx} onClick={() => setFx(!fx)} title="Toggle background effects">FX {fx ? 'on' : 'off'}</button>
         <button className="btn" id="tg" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</button>
         <button className="btn burger" type="button" aria-expanded={menu} aria-controls="nv" onClick={() => setMenu(!menu)}>{menu ? 'Close' : 'Menu'}</button></div></header>
