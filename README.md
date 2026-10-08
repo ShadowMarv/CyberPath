@@ -13,8 +13,6 @@
   <img alt="Educational use" src="https://img.shields.io/badge/use-educational-f0b73a">
 </p>
 
-<h3 align="center">A free, interactive cybersecurity academy that runs entirely in your browser.</h3>
-
 <p align="center">
   <a href="#-quick-start">Quick start</a> ·
   <a href="#-whats-inside">What's inside</a> ·
@@ -69,24 +67,13 @@ ENCRYPTION .... TLS 1.3 (example)
 
 ---
 
+live website
+
 ## 🚀 Quick start
 
 **Requirements:** Node.js 18 or newer and npm.
 
-```bash
-npm install
-npm run dev
-```
-
-Open the address Vite prints (usually <http://localhost:5173>).
-
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start the dev server with hot reload |
-| `npm run build` | Type-check with `tsc`, then build one self-contained `dist/index.html` |
-| `npm run preview` | Serve the production build locally |
-
----
+Open the address <https://cyber-path-w4sc.vercel.app/?_vercel_share=40zGyS5jtl6QhWLyjz3gs5agPEmozToP#home>.
 
 ## 🧩 What's inside
 
