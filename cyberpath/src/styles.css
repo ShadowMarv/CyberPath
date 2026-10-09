@@ -238,3 +238,32 @@ details.tl{background:var(--card);border:1px solid var(--line);border-radius:12p
 /* default page zoom: 67% on desktop-width screens (change with the Zoom button) */
 @media (min-width:1000px){html{zoom:var(--z,0.67)}}
 @media (max-width:999px){.zbtn{display:none}}
+
+
+/* Nova breathing room + narrower reading column */
+/* Keep the draggable mascot in its own left-side lane on wide screens. */
+@media (min-width: 1101px) {
+  main {
+    width: min(1080px, calc(100vw - 220px));
+    max-width: 1080px;
+    margin-left: clamp(176px, 14vw, 220px);
+    margin-right: auto;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  footer {
+    width: min(1080px, calc(100vw - 220px));
+    max-width: 1080px;
+    margin-left: clamp(176px, 14vw, 220px);
+    margin-right: auto;
+  }
+  .nova3 {
+    left: 8px;
+  }
+}
+@media (min-width: 1101px) and (max-width: 1280px) {
+  main, footer {
+    width: calc(100vw - 205px);
+    margin-left: 180px;
+  }
+}
