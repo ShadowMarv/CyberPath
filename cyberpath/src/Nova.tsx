@@ -10,6 +10,7 @@ export default function Nova() {
   useEffect(() => { const f = () => setOn(!on); window.addEventListener('toggle-nova', f); return () => window.removeEventListener('toggle-nova', f); });
   useEffect(() => {
     if (!on || !cv.current) return;
+    document.documentElement.classList.add('has-nova');
     const el = cv.current; const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const r = new THREE.WebGLRenderer({ canvas: el, alpha: true, antialias: true }); r.setPixelRatio(Math.min(window.devicePixelRatio, 2)); r.setSize(W, H, false);
     const sc = new THREE.Scene(); const cam = new THREE.PerspectiveCamera(34, W / H, 0.1, 50); cam.position.set(0, 2.2, 8.6); cam.lookAt(0, 2.2, 0);
@@ -66,7 +67,7 @@ export default function Nova() {
       r.render(sc, cam);
     };
     if (calm) r.render(sc, cam); else raf = requestAnimationFrame(frame);
-    return () => { cancelAnimationFrame(raf); el.removeEventListener('pointerdown', down); el.removeEventListener('pointermove', dmove); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); window.removeEventListener('pointermove', mv); window.removeEventListener('resize', rs); geos.forEach(g => g.dispose()); mats.forEach(m => m.dispose()); r.dispose(); };
+    return () => { document.documentElement.classList.remove('has-nova'); cancelAnimationFrame(raf); el.removeEventListener('pointerdown', down); el.removeEventListener('pointermove', dmove); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); window.removeEventListener('pointermove', mv); window.removeEventListener('resize', rs); geos.forEach(g => g.dispose()); mats.forEach(m => m.dispose()); r.dispose(); };
   }, [on]);
   return on ? <canvas ref={cv} className="nova3" role="img" aria-label="Nova, a small 3D mascot you can drag around" /> : null;
 }

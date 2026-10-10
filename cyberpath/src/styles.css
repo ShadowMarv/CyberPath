@@ -235,6 +235,6 @@ details.tl{background:var(--card);border:1px solid var(--line);border-radius:12p
 .skr{width:100%;max-width:420px;display:block;margin:12px auto}.skr .rg0{fill:none;stroke:var(--line)}.skr .rgp{fill:color-mix(in srgb,var(--acc) 28%,transparent);stroke:var(--acc);stroke-width:2}.skr .rgd{fill:var(--acc)}.skr text{fill:var(--ink);font:9.5px system-ui,sans-serif}
 @media (max-width:700px){.wm{display:none}}
 @media (prefers-reduced-motion:reduce){.sky .fl{animation:none}}
-/* default page zoom: 67% on desktop-width screens (change with the Zoom button) */
-@media (min-width:1000px){html{zoom:var(--z,0.67)}}
-@media (max-width:999px){.zbtn{display:none}}
+/* leave a free gutter for Nova and make the content column narrower */
+main{max-width:900px}
+@media (min-width:900px){html.has-nova body{padding-left:190px}}

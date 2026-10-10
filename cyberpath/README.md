@@ -151,7 +151,6 @@ flowchart LR
 
 | Feature | Details |
 |---|---|
-| 🔍 **Default 67% zoom** | On screens 1000px or wider the page renders at 67% (CSS `zoom`), like a browser zoom of 67%. The **Zoom** button cycles 67%, 80% and 100% and remembers your choice. Below 1000px nothing is zoomed |
 | 🌗 **Light and dark themes** | Follows your system, remembers your choice |
 | 🧭 **Top navigation** | Fixed bar with dropdown menus, hamburger below 1180px, command palette on `/` or `Ctrl/Cmd+K` |
 | 🌐 **Three.js** | Rotating network sphere with attack packets, four 3D icons, and **Nova**, a draggable 3D mascot |
@@ -322,7 +321,7 @@ It then appears on the Roadmap, in search, in the Find-a-lesson cards and in the
 | `Failed to resolve import "./Arsenal"` on Windows | Windows ignores letter case. Make sure `src/ArsenalPage.tsx` and `src/arsenalData.ts` both exist and nothing else is named `arsenal.*`. Extract new versions into a fresh folder rather than over an old one |
 | `npm audit` reports vulnerabilities | They come from dev tools such as the Vite dev server. Do not run `npm audit fix --force`, which can upgrade Vite and break the build |
 | Build works but the page is blank | Open the browser console. Hash links like `#road` need the page to be served over http or opened as a file, not inside a sandboxed preview that blocks scripts |
-| Everything looks too small or too large | Press the **Zoom** button in the top bar (67%, 80%, 100%). The default is 67% on desktop screens. Browser zoom with `Ctrl +` and `Ctrl -` still works on top of it |
+| Nova covers the content or the page feels too wide | The page keeps a 190px gutter on the left while Nova is on, and the content column is capped at 900px (`main{max-width}` in `src/styles.css`). Hide Nova from the footer to use the full width |
 | Nova is not visible | She is hidden below 600px width. Use "Show or hide Nova" in the footer |
 | Background effects feel heavy | Press **FX** in the top bar. They also turn off automatically with reduced motion |
 
